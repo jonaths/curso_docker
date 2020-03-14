@@ -1,0 +1,30 @@
+[
+    {
+        "Name": "red1",
+        "Id": "5368ab5f2aba72e2143f2bfbc02df7abba33544121d20e0faa8c737af946c290",
+        "Created": "2020-03-07T23:48:08.763925876-06:00",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},
+        "Options": {},
+        "Labels": {}
+    }
+]
