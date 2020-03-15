@@ -2,8 +2,9 @@
 
 El curso de Udemy es https://www.udemy.com/course/aprende-docker-desde-cero
 
-## Seccion 1
-
+---
+## Seccion 1. Introduccion al curso
+---
 ### 3 Introduccion a Docker
 - Encapsula todas las dependencias de un proyecto de manera transparente.
 - Actualmente va en la versión 18? Checar.
@@ -24,7 +25,7 @@ El curso de Udemy es https://www.udemy.com/course/aprende-docker-desde-cero
     - Advance
 - Los sistemas operativos de Community Edition funciona con Windows y Ubuntu. En plataformas cloud hay para AWS, Azure e IBM Cloud.
 
-### 6. Instrucciones de instalación
+### 6 Instrucciones de instalación
 - Aquí estan las instrucciones para Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/
 - Instale la version 19.03
 
@@ -36,7 +37,9 @@ El curso de Udemy es https://www.udemy.com/course/aprende-docker-desde-cero
 
 ![Elementos de Docker](imgs/conceptos.png)
 
-## Seccion 2
+---
+## Seccion 2. Trabajar con contenedores
+---
 
 ### 15 Arrancar y parar docker
 - Para iniciar, detener y checar el status.
@@ -111,7 +114,9 @@ $ systemctl enable docker
 - `docker inspect fbc1 > container.txt` proporciona información técnica (propiedades) del contenedor y lo guarda en un archivo.
 - `dicker inspect ubuntu:latest > image.txt` proporciona información de la imagen.
 
-## Seccion 3
+---
+## Seccion 3. Redes en Docker
+---
 
 ### 41 Introduccion a los puertos en docker
 
@@ -119,6 +124,7 @@ $ systemctl enable docker
 - Debemos hacerlos publicos y mapearlos a un puerto del host donde corre el contenedor.
 
 ![Mapear puertos en Docker](imgs/conceptos.png)
+
 
 ### 42 Gestionar puertos para acceder al contenedor
 - `sudo docker run -d -P nginx` mapea todos los puertos del contenedor al host.
@@ -137,23 +143,23 @@ $ systemctl enable docker
 - Si yo quiero saber que contenedores estan en una red lo mejor es verlo directamente en la red en lugar de mirar contenedor por contenedor.
 - `sudo docker port mongo_2` con este comando miramos los puertos por los que un contenedor escucha.
 
-### 46. Crear una nueva red
+### 46 Crear una nueva red
 - La red bridge que se crea automaticamente con Docker tiene algunas limitaciones.
 - `docker network create --help` para mostrar la ayuda.
 - `nmcli con` nos dice las conexiones que tenemos dentro del sistema operativo?
 
-### 47. Asociar contenedores a una red
+### 47 Asociar contenedores a una red
 - `sudo docker run -it --name ubuntua --network red1 ubuntu` corre un contenedor al que llama ubuntua a partir de la imagen ubuntu en la red1.
 - `docker network connect red2 ubuntua` conecta a la red2 el contenedor ubuntua. No lo quita de las redes a las que este asociado anteriormente.
 - `docker network disconnect red2 ubuntua` lo desconecta.
 
-### 49. Enlazar contenedores con --link
+### 49 Enlazar contenedores con --link
 - No se recomienda usar `--link` sino contenedores personalizados.
 - `sudo docker rm 'sudo docker ps -aq'` (el acento es grave, no comilla) usar **con cuidado**. Borra todos los contenedores.
 - `docker run -it --rm --name b1 busybox`: el `--rm` borra el contenedor cuando termina de ejecutarse.
 - `sudo docker run -it --rm --name b3 --link b1:maquina1 busybox` enlaza la maquina b3 con la b1 pero de manera unidireccional. `--link` no hace que b1 *vea* a b3. Tendria que usar la IP.  
 
-### 51. Enlazar contenedores en redes personalizadas
+### 51 Enlazar contenedores en redes personalizadas
 - `docker run -d --name mysqlserver --rm --network red1 -e MYSQL_ROOT_PASSWORD=secret mysql` crea un contenedor con mysql y lo asigna a la red1. `MYSQL_ROOT_PASSWORD` es requerido por el contenedor como contraseña de la base de datos. No le puse el puerto porque no quiero acceder desde la maquina host, sino desde otro contenedor.
 - `-e` es una variable de entorno.
 - `docker exec -it mysqlserver bash` para correr el contenedor con mysql. Luego `mysql -u root -p` para abrir el servidor mysql.
@@ -164,4 +170,49 @@ $ systemctl enable docker
 
 ![Diagrama de conexiones](imgs/wp-mysql.png)
 
-- `docker run -d --name wp --rm --network red 1 -e WORDPRESS_DN_HOST=mysql_wp -e WORDPRESS_DB_PASSWORD=secret wordpress` para crear un contenedor wordpress. 
+- `docker run -d --name wp --rm --network red 1 -e WORDPRESS_DN_HOST=mysql_wp -e WORDPRESS_DB_PASSWORD=secret wordpress` para crear un contenedor wordpress.
+
+---
+## Seccion 4: Volumenes
+---
+
+### 56 Conceptos de volumenes
+- Los volumenes permiten persistir la informacion.
+- Docker administra los volumenes completamente, no el sistema operativo.
+- Funcionan tanto en Linux como Windows.
+
+### 57 Crear un volumen en un contenedor
+- En `/var/lib/docker` dek host esta la informacion de Docker. No deberiamos tocarla a mano.
+- El comando `sudo docker run -it -v /datos --name ubuntu2 ubuntu bash` crea un contenedor y dentro del contenedor habra un directorio datos. Este estara mapeado de alguna forma en `/var/lib/docker/volumes`.
+- El volumen es persistente. Si se detiene el contenedor y se inicia la informacion estara ahi.
+
+### 58 Visualizar informacion de volumenes
+- `dockker volume` proporciona informacion sobre los volumenes.
+- `sudo docker volume inspect iddddddd` para mostrar los datos del contendor con id.
+
+### 60 Crear un directorio compartido con el host
+- Si no se especifica cómo el lugar donde se compartira el volumen se creara dentro de la carpeta de instalación de Docker.
+- `docker run -it -v $HOME/dir1:/dir1 --name ubuntu2 ubuntu` crea un contenedor con la imagen de ubuntu pero mapeando el directorio del host $HOME/dir1 al directorio dir1 del contenedor.
+- Al hacer esto aparece como bind, no es realmente un volumen.
+
+### 61 Compartir volumenes entre contenedores
+- `sudo docker run -it --name ubuntu5 --volumes-from ubuntu4 ubuntu bash` comparte los volumenes de otro contenedor con --volumes-from.
+- Si elimino los contenedores a los que apunta un volumen el volumen queda inutilizable. Ya no se puede asociar. Los archivos siguen existiendo pero para poder usarlos habria que moverlos a otro lugar y crear el volumen desde cero.
+- De la practica, estos dos comandos van a crear dos contenedores que comparten un volumen en $HOME/app. Si se hace un cambio en este directorio los dos contenedores lo van a ver.
+  - `sudo docker run -d --name apache1 -p 80:80 -v $HOME/app:/usr/local/apache2/htdocs/ httpd`
+  - `sudo docker run -d --name apache2 -p 8080:80 --volumes-from apache2 httpd`
+
+### Crear un volumen independiente
+- Podemos crear volumenes indendientes con un nombre en particular.
+- `sudo docker volume create vol1` crea un volumen con el nombre vol1.
+- `sudo docker run -it --name ubuntu8 -v vol1:/datos:ro ubuntu bash` corre un contenedor usando el vol1 pero mapeado al directorio datos dentro del contenedor en solo lectura.
+
+### 64 Borrar un volumen
+- `docker volume rm idddd` para borrar un volumen.
+- `sudo docker volume prune` borra todos los volumenes que no estan siendo usados por al menos un contenedor.
+
+---
+## Seccion 5. Crear y gestionar imagenes
+---
+
+### 66 Introduccion a las imagenes de Docker
