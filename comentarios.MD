@@ -216,3 +216,24 @@ $ systemctl enable docker
 ---
 
 ### 66 Introduccion a las imagenes de Docker
+- Las imagenes estan formadas por varias capas de solo lectura.
+
+![Mapear puertos en Docker](imgs/imagenes.png)
+
+### 67 Modificar un contenedor
+ - `docker diff ubuntu1` muestra las diferencias entre el contenedor y la imagen original.
+
+### 68 Docker commit. Crear una imagen manualmente
+- Con commit es una manera manual de hacer imagenes.
+- `docker commit ubuntu1 mi_ubuntu` toma el contenedor ubuntu1 y crea una imagen a la que llama mi_ubuntu
+- Despues solo hay que correr un contenedor usando esta imagen.
+
+### 69 Dockerfile
+- Para construir imagenes de forma automatica.
+- Una serie de directivas para construir una imagen.
+- Por cada linea se crea una capa de la imagen del video 66.
+
+### 70 Crear una imagen de Dockerfile
+- Al hacer Dockerfile no puede haber comandos interactivos.
+- `docker build -t imagen_python .` construye una imagen usando el archivo Dockerfile que se encuentra en el mismo directorio desde donde se corre. En el proceso de construirlo se crea un contenedor intermedio.
+- `docker run -it imagen_python python` con esto creo un contenedor a partir de la imagen y corro python. 
