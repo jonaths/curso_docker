@@ -236,4 +236,16 @@ $ systemctl enable docker
 ### 70 Crear una imagen de Dockerfile
 - Al hacer Dockerfile no puede haber comandos interactivos.
 - `docker build -t imagen_python .` construye una imagen usando el archivo Dockerfile que se encuentra en el mismo directorio desde donde se corre. En el proceso de construirlo se crea un contenedor intermedio.
-- `docker run -it imagen_python python` con esto creo un contenedor a partir de la imagen y corro python. 
+- `docker run -it imagen_python python` con esto creo un contenedor a partir de la imagen y corro python.
+
+### 71 RUN
+- `docker image history imagen_python` el historial de una imagen.
+- Al usar algo asi `echo 1.0 >> /etc/version && apt-get install -y git` el && sirve para que no aparezcan varias capas en la historia de la imagen.
+- `sudo docker build -t imagen_python:v1 .` para crear la imagen.
+- `docker run -it --rm imagen_python:v1 bash` para crear un contenedor a partir de la imagen.
+
+### CMD
+- El comando por default al terminar de crear el contenedor a partir de una imagen.
+- Dentro de un Dockerfile solo el ultimo CMD es el que vale.
+- `CMD ["echo", "Welcome to this container"]` corre el comando usando exec. Es lo recomendable.
+- 
