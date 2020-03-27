@@ -248,4 +248,54 @@ $ systemctl enable docker
 - El comando por default al terminar de crear el contenedor a partir de una imagen.
 - Dentro de un Dockerfile solo el ultimo CMD es el que vale.
 - `CMD ["echo", "Welcome to this container"]` corre el comando usando exec. Es lo recomendable.
+
+### 73. Entrypoint
+- Al igual que CMD ejecuta algo al iniciar el contenedor. La diferencia es que Entrypoint nos permite blindar ese comando. Que se ejecute siempre. Con CMD no pasa.
+- Por ejemplo `docker run -it --rm image:v2 ls` ejecuta el comando ls sustituyendo lo que decia CMD que era ejecutar el bash.
+- Con ENTRYPOINT puedo concatenar comandos usando esta linea en Dockerfile al comando de docker run.
+
+### 74 Workdir
+- Nos permite determinar el directorio de trabajo para otras directivas. El comando de abajo corre el touch en /stats.
+```
+WORKDIR /stats
+RUN touch f2.txt  
+```
+
+### 75 COPY-ADD
+- COPY: para copiar archivos desde el host al contenedor.
+- ADD: parecido a COPY.
+- Aunque ADD y COPY son funcionalmente similares, en general, se prefiere COPY. Eso es porque es más transparente que ADD. COPY solo admite la copy básica de files locales en el contenedor, mientras que ADD tiene algunas características (como la extracción de tar únicamente local y el soporte de URL remoto) que no son inmediatamente obvias. En consecuencia, el mejor uso para ADD es la autoextracción local de files tar en la image, como en ADD rootfs.tar.xz /.
+
+### 76 ENV
+- `docker run -it --rm --env x=10 image:v4` genera la variable x y le asigna 10.
+- Puedo mirarlo con el comando `env`.
+- Para trabajar en el contenedor.
+
+### 77 ARG
+- La directiva ARG nos permite pasar variables a la hora de construir la imagen.
+- `docker build -t image:v6 --build-arg dir2=/data2 .` asigna el valor de dir2 al momento de crear la imagen.
+- Para trabajar en la imagen.
+
+### 78 EXPOSE
+- Me permite exponer puertos.
+- Los puertos que se ponen aqui no se vuelven publicos.
+- Ayuda a quien usara la imagen a saber qué puertos estan siendo utilizados por la imagen.
+
+### 80 Practica Dockerfile 1. Crear una imagen NGINX
+- Se crea un servidor NGINX.
+- En la configuracion hay dos comandos `VOLUME /usr/share/nginx/www/
+` y `ADD original /usr/share/nginx/www/`. El primero hace que ese directorio sea un volumen, el segundo copia el contenido de original al directorio sobre el que se creo un volumen.
+- Si entramos al volumen con en `/var/lib/docker/volumes/id_del_volumen/_data` estaran los archivos. Podemos editarlo y ver el cambio en la pagina web.
+
+### 82 Repaso de Docker Hub
+- Hay dos tipos de repositorios. Los de tipo raíz que no tienen / y los de usuarios y empresas que tienen algo así como company/nombre_del_repositorio.
+
+### 83. Subir imagenes a Docker Hub
+- La cuenta gratuita solo permite subir un repositorio privado, los demás son públicos.
+- Primero logearse con `docker login`.
+- Todo lo que se suba lleva el nombre de usuario.
+- Para subir `docker push jonaths2020/nginx:v1`.
+- Se puede crear otro tag con `push jonaths2020/nginx:tagname`. Llevara menos tiempo porque las capas anteriores ya las tiene.
+
+### 84. Integración contínua. Ejemplo: conecetar DockerHub y Github
 - 
